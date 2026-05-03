@@ -68,3 +68,41 @@ def get_monthly_cost(months_ago: int = 0) -> float:
     except ClientError as e:
         logger.error(f"AWS API error: {e.response['Error']['Message']}")
         raise
+
+def get_cost_by_service(months_ago: int = 0) -> list[dict]:
+    """
+    Ambil breakdown cost per AWS service.
+
+    Args:
+        months_ago: 0 = bulan ini, 1 = bulan lalu, dst
+
+    Returns:
+        List of dict {"service": str, "cost": float}, diurutkan dari terbesar
+    """
+    start, end = _get_month_range(months_ago)
+    logger.info(f"Mengambil breakdown per service: {start} s/d {end}")
+
+    try:
+        client = _get_client()
+        response = client.get_cost_and_usage(
+            TimePeriod={"Start": start, "End": end},
+            Granularity="MONTHLY",
+            Metrics=["UnblendedCost"],
+            GroupBy=[{"Type": "DIMENSION", "Key": "SERVICE"}],
+        )
+
+        results = []
+        for group in response["ResultsByTime"][0]["Groups"]:
+            service = group["Keys"][0]
+            cost = float(group["Metrics"]["UnblendedCost"]["Amount"])
+            if cost > 0:
+                results.append({"service": service, "cost": cost})
+
+        return sorted(results, key=lambda x: x["cost"], reverse=True)
+
+    except NoCredentialsError:
+        logger.error("AWS credentials tidak ditemukan.")
+        raise
+    except ClientError as e:
+        logger.error(f"AWS API error: {e.response['Error']['Message']}")
+        raise

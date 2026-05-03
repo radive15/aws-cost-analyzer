@@ -5,8 +5,8 @@ Tool CLI berbasis Python untuk menganalisis dan memantau biaya AWS menggunakan C
 ## Fitur
 
 - [x] Lihat total biaya bulan ini vs bulan lalu
-- [ ] Breakdown biaya per AWS service (EC2, S3, RDS, dst)
-- [ ] Filter berdasarkan date range
+- [x] Breakdown biaya per AWS service (EC2, S3, RDS, dst)
+- [x] Filter berdasarkan bulan dengan flag `--months`
 - [ ] Alert ke Slack jika cost melebihi threshold
 - [ ] Export ke CSV / JSON
 
@@ -46,10 +46,9 @@ cp .env.example .env
 Edit file `.env`:
 
 ```env
-AWS_REGION=ap-southeast-1
+AWS_REGION=ap-southeast-3
 AWS_PROFILE=default
 COST_THRESHOLD_USD=100.0
-LOOKBACK_MONTHS=3
 ```
 
 > **Penting:** Jangan pernah commit file `.env` ke GitHub. File ini sudah di-exclude di `.gitignore`.
@@ -57,30 +56,37 @@ LOOKBACK_MONTHS=3
 ## Cara Pakai
 
 ```bash
-# Lihat biaya bulan ini
+# Lihat biaya bulan ini + breakdown per service
 python main.py
 
-# Lihat biaya 3 bulan terakhir
-python main.py --months 3
+# Lihat biaya bulan lalu
+python main.py --months 1
 
-# Breakdown per service
-python main.py --breakdown
+# Lihat biaya 2 bulan yang lalu
+python main.py --months 2
+
+# Lihat help
+python main.py --help
 ```
 
 ## Contoh Output
 
 ```
-=== AWS Cost Summary ===
-Periode  : April 2026
-Total    : $42.31 USD
+=== AWS Cost Analyzer ===
 
-Bulan lalu (Maret 2026): $38.95 USD
-Perubahan: +$3.36 (+8.6%) ⚠️
+Periode       : May 2026
+Bulan ini     : $42.31 USD
+Bulan lalu    : $38.95 USD  (April 2026)
+Perubahan     : ▲ +3.36 USD (+8.6%)
 
-Top Services:
-  EC2       $28.50  (67%)
-  S3         $8.20  (19%)
-  RDS        $5.61  (13%)
+Breakdown per Service:
+  Service               Cost (USD)    Share
+  ----------------------------------------
+  Amazon EC2              $28.50        67.3%
+  Amazon S3                $8.20        19.4%
+  Amazon RDS               $5.61        13.3%
+  ----------------------------------------
+  TOTAL                   $42.31       100.0%
 ```
 
 ## Struktur Project
