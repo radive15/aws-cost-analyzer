@@ -49,3 +49,8 @@ output/
 *.csv
 *.json
 !.env.example
+
+
+aws-cost-*.csv
+aws-cost-*.json
+aws-cost-*.png
