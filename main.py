@@ -3,6 +3,7 @@ import logging
 
 from src.cost_explorer import get_cost_by_service, get_monthly_cost
 from src.currency import get_usd_to_idr
+from src.exporter import export_to_csv, export_to_json
 from src.formatter import format_service_table, format_summary
 
 logging.basicConfig(
@@ -20,6 +21,11 @@ def main() -> None:
         default=0,
         help="Bulan ke belakang (0=bulan ini, 1=bulan lalu)",
     )
+    parser.add_argument(
+        "--export",
+        choices=["csv", "json", "all"],
+        help="Export hasil ke file: csv, json, atau all (keduanya)",
+    )
     args = parser.parse_args()
 
     print("\n=== AWS Cost Analyzer ===\n")
@@ -35,6 +41,15 @@ def main() -> None:
     print("\nBreakdown per Service:")
     print(format_service_table(services, this_month, rate))
     print()
+
+    # Export jika flag --export diberikan
+    if args.export in ("csv", "all"):
+        path = export_to_csv(services, this_month, rate, months_ago=args.months)
+        print(f"CSV  → {path}")
+
+    if args.export in ("json", "all"):
+        path = export_to_json(services, this_month, last_month, rate, months_ago=args.months)
+        print(f"JSON → {path}")
 
 
 if __name__ == "__main__":
