@@ -11,6 +11,9 @@ Tool CLI berbasis Python untuk menganalisis dan memantau biaya AWS menggunakan C
 - [x] Export ke CSV dan JSON dengan flag `--export`
 - [x] Visualisasi bar chart per service dengan flag `--chart`
 - [ ] Alert ke Slack jika cost melebihi threshold
+- [ ] Analisis lanjutan dengan pandas (groupby, agregasi multi-bulan)
+- [ ] Tren cost per bulan sebagai line chart dengan matplotlib
+- [ ] Export laporan lengkap ke HTML report
 
 ## Prasyarat
 
