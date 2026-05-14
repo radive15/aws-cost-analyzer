@@ -1,19 +1,10 @@
 import csv
 import json
 import logging
-from datetime import date, timedelta
 from pathlib import Path
+from src.utils import get_period_label
 
 logger = logging.getLogger(__name__)
-
-
-def _get_period_label(months_ago: int) -> str:
-    """Hasilkan label periode format YYYY-MM."""
-    today = date.today()
-    first = today.replace(day=1)
-    for _ in range(months_ago):
-        first = (first - timedelta(days=1)).replace(day=1)
-    return first.strftime("%Y-%m")
 
 
 def export_to_csv(
@@ -36,7 +27,7 @@ def export_to_csv(
     Returns:
         Path lengkap file CSV yang dibuat
     """
-    period = _get_period_label(months_ago)
+    period = get_period_label(months_ago)
     filename = Path(output_dir) / f"aws-cost-{period}.csv"
 
     # open() pakai context manager (with) — file pasti ditutup meski ada error
@@ -87,7 +78,7 @@ def export_to_json(
     Returns:
         Path lengkap file JSON yang dibuat
     """
-    period = _get_period_label(months_ago)
+    period = get_period_label(months_ago)
     filename = Path(output_dir) / f"aws-cost-{period}.json"
 
     diff = this_month - last_month

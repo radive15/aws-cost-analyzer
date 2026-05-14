@@ -1,12 +1,4 @@
-from datetime import date, timedelta
-
-
-def _month_label(months_ago: int) -> str:
-    today = date.today()
-    first = today.replace(day=1)
-    for _ in range(months_ago):
-        first = (first - timedelta(days=1)).replace(day=1)
-    return first.strftime("%B %Y")
+from src.utils import get_month_label
 
 
 def _idr(amount_usd: float, rate: float) -> str:
@@ -21,9 +13,9 @@ def format_summary(this_month: float, last_month: float, rate: float) -> str:
     trend = "▲" if diff > 0 else "▼"
 
     lines = [
-        f"{'Periode':<14}: {_month_label(0)}",
+        f"{'Periode':<14}: {get_month_label(0)}",
         f"{'Bulan ini':<14}: ${this_month:.2f} USD  ({_idr(this_month, rate)})",
-        f"{'Bulan lalu':<14}: ${last_month:.2f} USD  ({_idr(last_month, rate)})  ({_month_label(1)})",
+        f"{'Bulan lalu':<14}: ${last_month:.2f} USD  ({_idr(last_month, rate)})  ({get_month_label(1)})",
         f"{'Perubahan':<14}: {trend} {diff:+.2f} USD ({pct_str})",
     ]
     return "\n".join(lines)

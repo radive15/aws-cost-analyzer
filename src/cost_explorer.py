@@ -1,5 +1,6 @@
 import logging
 from datetime import date, timedelta
+from typing import Any
 
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
@@ -9,7 +10,7 @@ from src.config import AWS_PROFILE, AWS_REGION
 logger = logging.getLogger(__name__)
 
 
-def _get_client() -> boto3.client:
+def _get_client() -> Any:
     """Buat boto3 client untuk Cost Explorer."""
     session = boto3.Session(profile_name=AWS_PROFILE)
     return session.client("ce", region_name=AWS_REGION)
@@ -68,6 +69,7 @@ def get_monthly_cost(months_ago: int = 0) -> float:
     except ClientError as e:
         logger.error(f"AWS API error: {e.response['Error']['Message']}")
         raise
+
 
 def get_cost_by_service(months_ago: int = 0) -> list[dict]:
     """

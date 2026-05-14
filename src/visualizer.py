@@ -1,19 +1,10 @@
 import logging
-from datetime import date, timedelta
 from pathlib import Path
-
 import matplotlib.pyplot as plt
 
+from src.utils import get_period_label
+
 logger = logging.getLogger(__name__)
-
-
-def _get_period_label(months_ago: int) -> str:
-    """Hasilkan label periode format YYYY-MM."""
-    today = date.today()
-    first = today.replace(day=1)
-    for _ in range(months_ago):
-        first = (first - timedelta(days=1)).replace(day=1)
-    return first.strftime("%Y-%m")
 
 
 def save_chart(
@@ -40,7 +31,7 @@ def save_chart(
         logger.warning("Tidak ada data service untuk divisualisasikan.")
         raise ValueError("Data service kosong")
 
-    period = _get_period_label(months_ago)
+    period = get_period_label(months_ago)
     filename = Path(output_dir) / f"aws-cost-{period}.png"
 
     # Pisahkan nama service dan nilai cost — matplotlib butuh 2 list terpisah
